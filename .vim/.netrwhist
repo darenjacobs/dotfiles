@@ -1,0 +1,5 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_1='/Users/darenjacobs/.vagrant.d/boxes/ubuntu-VAGRANTSLASH-trusty64'
+let g:netrw_dirhist_2='/Users/darenjacobs/.vagrant.d/boxes/ubuntu-VAGRANTSLASH-trusty64/20161020.0.11'
+let g:netrw_dirhist_3='/Users/darenjacobs/.vagrant.d/boxes/ubuntu-VAGRANTSLASH-trusty64/20161020.0.11/virtualbox'
