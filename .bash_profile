@@ -1,8 +1,5 @@
 # .bash_profile
 
-if [ -f /etc/bashrc ]; then
-                . /etc/bashrc
-fi
 
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
@@ -21,24 +18,31 @@ export HISTTIMEFORMAT="[%Y-%m-%d] [%T] "
 export HISTFILESIZE=1000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export PS1="\[$(tput bold)\][\[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
-export PATH=${PATH}:~/.bin/
+export PATH=${PATH}:$HOME/local/bin:$HOME/ve/bin
 export CDPATH=.:~/stash/
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
+export PATH
+
+# Aliases
 alias python=python2.7
 alias grep="grep --color=auto"
-
-
-PATH=$PATH:$HOME/bin
-export PATH
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+alias tempenv='source ~/ve/bin/activate'
+alias vi='vim'
+alias l.='ls -d .* --color=auto'
+alias ll='ls -al --color=auto'
+alias ls='ls -F --color=auto'
+alias grep='grep --color=auto'
+alias add-ssh='eval `ssh-agent -s`; ssh-add'
 
 
 # Custom login stuff
 
 # Only on eng1 / jump box
-this_host=$(hostname)
-if [[ $this_host == changeme.com ]]; then
+this_host="ip-172-31-26-56"
+this_node=$(hostname)
+if [[ $this_node == $this_host ]]; then
         tmux new-session -A -s main
-        export PATH=${PATH}:~/ve/bin/
 fi
 
 
