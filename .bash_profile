@@ -38,7 +38,7 @@ alias add-ssh='eval `ssh-agent -s`; ssh-add'
 
 # Custom login stuff
 
-# Only on eng1 / jump box
+# Tmux: Only run on my Linux jump box
 this_host="ip-172-31-26-56"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
