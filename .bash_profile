@@ -42,7 +42,7 @@ alias add-ssh='eval `ssh-agent -s`; ssh-add'
 this_host="ip-172-31-26-56"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
-        tmux new-session -A -s main
+        tmux -2 new-session -A -s main
 fi
 
 

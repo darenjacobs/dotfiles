@@ -61,9 +61,9 @@ nnoremap <Leader>j <C-w>j
 
 " Color scheme and visuals
 set background=dark
-colorscheme gruvbox
 set t_Co=256  " vim-monokai now only support 256 colours in terminal.
 let g:airline_theme='gruvbox'
+colorscheme gruvbox
 
 " Fix Yaml and sh file editing
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
