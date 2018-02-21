@@ -58,7 +58,11 @@ PROMPT_COMMAND="history -a"
 typeset -r PROMPT_COMMAND
 clear
 echo -ne ${RED}"Hello $USER, you are now logged in on $HOSTNAME ";echo "";
-echo -e ${CYAN}'This baby is powered by:' `cat /etc/redhat-release` ;
+if [ -f /etc/redhat-release ]; then
+  echo -e ${CYAN}'This baby is powered by:' $(cat /etc/redhat-release) ;
+elif [ -f /etc/issue ];then
+  echo -e ${CYAN}'This baby is powered by:' $(head -n 1 /etc/issue) ;
+fi
 echo -e "${WHITE}"; cal ;
 echo -ne "${CYAN}Uptime for this server is ";uptime | awk /'up/ {print $3,$4}'
 
