@@ -8,12 +8,6 @@ fi
 
 # User specific environment and startup programs
 # Djacobs
-[[ $- != *i* ]] && return
-function parse_git_branch {
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
-}
-#export HISTTIMEFORMAT="%F %T "
 export HISTTIMEFORMAT="[%Y-%m-%d] [%T] "
 export HISTFILESIZE=1000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
