@@ -20,7 +20,7 @@ set wildchar=<TAB> " Character for CLI expansion (TAB-completion)
 set ic " ignore case in searches
 set undofile " Maintain undo history between sessions
 set undodir=~/.vim/undodir
-set pastetoggle=<F3> " Turn off autoident whe pasting code.  :set paste :set nopaste
+set pastetoggle=<F6> " Turn off autoident when pasting code.  :set paste :set nopaste
 
 " Use ripgrep when using Ctrl-P
 if executable('rg')
