@@ -6,12 +6,6 @@ if [ -f ~/.bashrc ]; then
 	. ~/.bashrc
 fi
 
-# User specific environment and startup programs
-function parse_git_branch {
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-    echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
-}
-
 # Aliases
 alias grep="grep --color=auto"
 alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
@@ -33,7 +27,7 @@ export PATH
 # Custom login stuff
 
 # Tmux: Only run on my jump box
-this_host="ansible"
+this_host="lx-azr-dkrctrl"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
