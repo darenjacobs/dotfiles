@@ -15,7 +15,6 @@ alias python=python2.7
 alias grep="grep --color=auto"
 alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
 alias tempenv='source ~/ve/bin/activate'
-alias vi='vim'
 alias l.='ls -d .* --color=auto'
 alias ll='ls -al --color=auto'
 alias ls='ls -F --color=auto'

@@ -7,7 +7,6 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # User specific environment and startup programs
-# Djacobs
 export HISTTIMEFORMAT="[%Y-%m-%d] [%T] "
 export HISTFILESIZE=1000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
@@ -19,8 +18,8 @@ export PATH
 
 # Custom login stuff
 
-# Tmux: Only run on my Linux jump box
-this_host="ip-172-31-26-56"
+# Tmux: Only run on my jump box
+this_host="ansible"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
@@ -40,10 +39,11 @@ typeset -r PROMPT_COMMAND
 clear
 echo -ne ${RED}"Hello $USER, you are now logged in on $HOSTNAME ";echo "";
 if [ -f /etc/redhat-release ]; then
-  echo -e ${CYAN}'This baby is powered by:' $(cat /etc/redhat-release) ;
+  whats_this=$(cat /etc/redhat-release)
 elif [ -f /etc/issue ];then
-  echo -e ${CYAN}'This baby is powered by:' $(head -n 1 /etc/issue) ;
+  whats_this=$(head -n 1 /etc/issue)
 fi
+echo -e ${CYAN}"This baby is powered by: ${whats_this}" ;
 echo -e "${WHITE}"; cal ;
 echo -ne "${CYAN}Uptime for this server is ";uptime | awk /'up/ {print $3,$4}'
 
