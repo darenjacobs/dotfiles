@@ -1,6 +1,7 @@
 execute pathogen#infect()
 syntax on
 filetype plugin indent on
+set mouse=a
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 set tabstop=2 " number of visual spaces per TAB
 set softtabstop=2 " number of spaces in tab when editing
@@ -35,7 +36,7 @@ let g:ackprg = 'rg --vimgrep --no-heading' " Use ack.vim to search via ag
 set wildignore+=*.a,*.o
 set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png
 set wildignore+=.DS_Store
-set wildignore+=~,*.swp,*.tmp
+set wildignore+=*/.git/*,*/tmp/*,~,*.swp,*.tmp
 
 " NERDTree leader
 let mapleader = "\<Space>"  " leader is space key
