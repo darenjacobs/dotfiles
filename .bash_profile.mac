@@ -27,7 +27,6 @@ export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export PS1="\[$(tput bold)\][\[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
 export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
-#export CDPATH=".:~/Upsight/stash/"
 export EDITOR=/usr/local/bin/vim
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home
 
@@ -35,4 +34,3 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Hom
 # The original version is saved in .bash_profile.pysave
 PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
 export PATH
-
