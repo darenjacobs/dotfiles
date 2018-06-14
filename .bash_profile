@@ -1,25 +1,36 @@
 # .bash_profile
 
-
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
 	. ~/.bashrc
 fi
 
+# Aliases
+alias grep="grep --color=auto"
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+alias l.='ls -d .* --color=auto'
+alias ll='ls -al --color=auto'
+alias ls='ls -F --color=auto'
+
+# User specific aliases and functions
+function parse_git_branch {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+    echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
+}
+
 # User specific environment and startup programs
 export HISTTIMEFORMAT="[%Y-%m-%d] [%T] "
 export HISTFILESIZE=1000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
-export PS1="\[$(tput bold)\][\[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
-export PATH=${PATH}:$HOME/local/bin:$HOME/ve/bin
-export CDPATH=.:~/stash/
+#export PS1="\[$(tput bold)\][\[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
+export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]]\n \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
-export PATH
+export PATH=~/.local/bin:$PATH
 
 # Custom login stuff
 
 # Tmux: Only run on my jump box
-this_host="ansible"
+this_host="lx-dkrctrld.fhlbny.net"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
