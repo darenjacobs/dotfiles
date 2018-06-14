@@ -35,7 +35,7 @@ let g:ackprg = 'rg --vimgrep --no-heading' " Use ack.vim to search via ag
 set wildignore+=*.a,*.o
 set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png
 set wildignore+=.DS_Store
-set wildignore+=~,*.swp,*.tmp
+set wildignore+=*/.git/*,*/tmp/*,~,*.swp,*.tmp
 
 " NERDTree leader
 let mapleader = "\<Space>"  " leader is space key
