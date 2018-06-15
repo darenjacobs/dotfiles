@@ -13,7 +13,6 @@ alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall F
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias ls="ls -GF"
 alias ll="ls -al"
-alias python=python2.7
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 [[ $- != *i* ]] && return
@@ -33,6 +32,7 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Hom
 
 # Setting PATH for Python 3.6
 # The original version is saved in .bash_profile.pysave
-#alias python=python3.6
+#alias python=python2.7
+alias python=python3.6
 PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
 export PATH
