@@ -13,7 +13,6 @@ alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall F
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias ls="ls -GF"
 alias ll="ls -al"
-alias python=python2.7
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 [[ $- != *i* ]] && return
@@ -24,7 +23,8 @@ function parse_git_branch {
 export HISTTIMEFORMAT="%F %T "
 export HISTFILESIZE=1000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
-export PS1="\[$(tput bold)\][\[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
+#export PS1="\[$(tput bold)\][\[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
+export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n> \[$(tput sgr0)\]"
 export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
 export EDITOR=/usr/local/bin/vim
@@ -32,6 +32,15 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Hom
 
 # Setting PATH for Python 3.6
 # The original version is saved in .bash_profile.pysave
-#alias python=python3.6
+#alias python=python2.7
+alias python=python3.6
 PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
 export PATH
+
+
+
+# Work K8s
+#us-east-2 - in its own VPC
+#export KOPS_STATE_STORE=s3://k8s-workshop-kopsstatestore-10w3hb8hpjdxr
+export KOPS_STATE_STORE=s3://fhlbny.cluster.k8s.local-state
+
