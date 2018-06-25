@@ -4,6 +4,7 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # Aliases
+alias dool="ssh jacobsd@lx-dotoolsd1"
 alias grep="grep --color=auto"
 alias tempenv='source ~/ve/bin/activate'
 alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
@@ -18,12 +19,12 @@ function parse_git_branch {
     echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
 }
 
-export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]]\n \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)> \[$(tput sgr0)\]"
+export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n> \[$(tput sgr0)\]"
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export HISTIGNORE="&:ls:[bf]g:exit"
 export HISTTIMEFORMAT="[%Y-%m-%d] [%T] "
 export HISTFILESIZE=1000000
-export PATH=${PATH}:$HOME/local/bin
+export PATH=${PATH}:$HOME/.local/bin
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
 
 
