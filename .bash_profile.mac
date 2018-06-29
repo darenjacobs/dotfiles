@@ -36,11 +36,3 @@ alias python=python2.7
 #alias python=python3.6
 PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
 export PATH
-
-
-
-# Work K8s
-#us-east-2 - in its own VPC
-#export KOPS_STATE_STORE=s3://k8s-workshop-kopsstatestore-10w3hb8hpjdxr
-export KOPS_STATE_STORE=s3://fhlbny.cluster.k8s.local-state
-
