@@ -4,10 +4,7 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # Aliases
-alias dool="ssh jacobsd@lx-dotoolsd1"
 alias grep="grep --color=auto"
-alias tempenv='source ~/ve/bin/activate'
-alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias l.='ls -d .* --color=auto'
 alias ll='ls -al --color=auto'
@@ -53,7 +50,7 @@ if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]]; then
 fi
 
 # Tmux: Only run on my jump box
-this_host="lx-dkrctrld.fhlbny.net"
+this_host="DARENJACOBS5761"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
