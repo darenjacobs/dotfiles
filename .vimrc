@@ -20,7 +20,7 @@ set wildchar=<TAB> " Character for CLI expansion (TAB-completion)
 set ic " ignore case in searches
 set undofile " Maintain undo history between sessions
 set undodir=~/.vim/undodir
-set pastetoggle=<F6> " Turn off autoident when pasting code.  :set paste :set nopaste
+set pastetoggle=<F6> " Turn off autoident whe pasting code.  :set paste :set nopaste
 
 " Use ripgrep when using Ctrl-P
 if executable('rg')
@@ -35,7 +35,7 @@ let g:ackprg = 'rg --vimgrep --no-heading' " Use ack.vim to search via ag
 set wildignore+=*.a,*.o
 set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png
 set wildignore+=.DS_Store
-set wildignore+=~,*.swp,*.tmp
+set wildignore+=*/.git/*,*/tmp/*,~,*.swp,*.tmp
 
 " NERDTree leader
 let mapleader = "\<Space>"  " leader is space key
@@ -61,9 +61,9 @@ nnoremap <Leader>j <C-w>j
 
 " Color scheme and visuals
 set background=dark
+colorscheme gruvbox
 set t_Co=256  " vim-monokai now only support 256 colours in terminal.
 let g:airline_theme='gruvbox'
-colorscheme gruvbox
 
 " Fix Yaml and sh file editing
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
