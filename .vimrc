@@ -22,6 +22,10 @@ set undofile " Maintain undo history between sessions
 set undodir=~/.vim/undodir
 set pastetoggle=<F6> " Turn off autoident whe pasting code.  :set paste :set nopaste
 
+" Trying Plug we'll see
+call plug#begin('~/.vim/plugged')
+Plug 'sheerun/vim-polyglot'
+
 " Use ripgrep when using Ctrl-P
 if executable('rg')
   set grepprg=rg\ --color=never

@@ -50,7 +50,7 @@ if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]]; then
 fi
 
 # Tmux: Only run on my jump box
-this_host="DARENJACOBS5761"
+this_host="lx-dkrctrld.fhlbny.net"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
