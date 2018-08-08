@@ -1,5 +1,7 @@
 execute pathogen#infect()
+set nu
 syntax on
+set mouse=a
 filetype plugin indent on
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 set tabstop=2 " number of visual spaces per TAB
