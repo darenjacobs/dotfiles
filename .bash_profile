@@ -9,6 +9,8 @@ alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias l.='ls -d .* --color=auto'
 alias ll='ls -al --color=auto'
 alias ls='ls -F --color=auto'
+alias get_efs='ssh ec2-user@18.233.10.220'
+alias matrix='LC_ALL=C tr -c "[:digit:]" " " < /dev/urandom | dd cbs=$COLUMNS conv=unblock | GREP_COLOR="1;32" grep --color "[^ ]"'
 
 # Display Git branch
 function parse_git_branch {
@@ -50,9 +52,9 @@ if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]]; then
 fi
 
 # Tmux: Only run on my jump box
-this_host="DARENJACOBS5761"
+this_host="lx-sndbxdkr"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
 fi
-
+export KOPS_STATE_STORE=s3://fhlbny.cluster.k8s.local-state
