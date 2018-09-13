@@ -1,4 +1,5 @@
 execute pathogen#infect()
+set nu
 syntax on
 set mouse=a
 filetype plugin indent on
@@ -22,6 +23,10 @@ set ic " ignore case in searches
 set undofile " Maintain undo history between sessions
 set undodir=~/.vim/undodir
 set pastetoggle=<F6> " Turn off autoident whe pasting code.  :set paste :set nopaste
+
+" Trying Plug we'll see
+call plug#begin('~/.vim/plugged')
+Plug 'sheerun/vim-polyglot'
 
 " Use ripgrep when using Ctrl-P
 if executable('rg')
