@@ -57,4 +57,3 @@ this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
 fi
-export KOPS_STATE_STORE=s3://fhlbny.cluster.k8s.local-state
