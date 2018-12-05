@@ -23,8 +23,9 @@ export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export HISTIGNORE="&:ls:[bf]g:exit"
 export HISTTIMEFORMAT="[%Y-%m-%d] [%T] "
 export HISTFILESIZE=1000000
-export PATH=${PATH}:$HOME/.local/bin
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
+export PATH=${PATH}:$HOME/.local/bin
+export PYTHONPATH=${PYTHONPATH}:${HOME}/.local/bin
 
 
 shopt -s histappend
@@ -52,7 +53,7 @@ if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]]; then
 fi
 
 # Tmux: Only run on my jump box
-this_host="lx-sndbxdkr"
+this_host="ct-text-tagging"
 this_node=$(hostname)
 if [[ $this_node == $this_host ]]; then
         tmux -2 new-session -A -s main
