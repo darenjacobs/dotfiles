@@ -15,6 +15,7 @@ alias ls="ls -GF"
 alias ll="ls -al"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
+alias jmp='ssh darenjacobs@35.237.158.149'
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -36,3 +37,10 @@ alias python=python2.7
 #alias python=python3.6
 PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
 export PATH
+PYTHONUSERBASE=$HOME
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/darenjacobs/Documents/google-cloud-sdk/path.bash.inc' ]; then . '/Users/darenjacobs/Documents/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/darenjacobs/Documents/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/darenjacobs/Documents/google-cloud-sdk/completion.bash.inc'; fi
