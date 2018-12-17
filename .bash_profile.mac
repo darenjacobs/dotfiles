@@ -16,6 +16,7 @@ alias ll="ls -al"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias jmp='ssh darenjacobs@35.237.158.149'
+alias dnode='ssh darenjacobs@35.243.168.141'
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -29,14 +30,6 @@ export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
 export EDITOR=/usr/local/bin/vim
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home
-
-# Setting PATH for Python 3.6
-# The original version is saved in .bash_profile.pysave
-alias python=python2.7
-#alias python=python3.6
-PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
-export PATH
-PYTHONUSERBASE=$HOME
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/darenjacobs/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/darenjacobs/Downloads/google-cloud-sdk/path.bash.inc'; fi
