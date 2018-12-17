@@ -1,0 +1,54 @@
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+# Get bash-completion
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+
+# User specific aliases and functions
+alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
+alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
+alias ls="ls -GF"
+alias ll="ls -al"
+alias grep="grep --color=auto"
+alias add-ssh='eval `ssh-agent -s`; ssh-add'
+alias jmp='ssh darenjacobs@35.237.158.149'
+alias dnode='ssh darenjacobs@35.243.168.141'
+[[ $- != *i* ]] && return
+function parse_git_branch {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
+}
+export HISTTIMEFORMAT="%F %T "
+export HISTFILESIZE=1000000
+export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
+export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n> \[$(tput sgr0)\]"
+export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin
+export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
+export EDITOR=/usr/local/bin/vim
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/darenjacobs/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/darenjacobs/Downloads/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/darenjacobs/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/darenjacobs/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+# added by Anaconda3 5.3.1 installer
+# >>> conda init >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$(CONDA_REPORT_ERRORS=false '/Users/darenjacobs/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    \eval "$__conda_setup"
+else
+    if [ -f "/Users/darenjacobs/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/darenjacobs/anaconda3/etc/profile.d/conda.sh"
+        CONDA_CHANGEPS1=false conda activate base
+    else
+        \export PATH="/Users/darenjacobs/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda init <<<
