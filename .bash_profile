@@ -9,7 +9,6 @@ alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias l.='ls -d .* --color=auto'
 alias ll='ls -al --color=auto'
 alias ls='ls -F --color=auto'
-alias get_efs='ssh ec2-user@18.233.10.220'
 alias matrix='LC_ALL=C tr -c "[:digit:]" " " < /dev/urandom | dd cbs=$COLUMNS conv=unblock | GREP_COLOR="1;32" grep --color "[^ ]"'
 
 # Display Git branch
@@ -24,8 +23,7 @@ export HISTIGNORE="&:ls:[bf]g:exit"
 export HISTTIMEFORMAT="[%Y-%m-%d] [%T] "
 export HISTFILESIZE=1000000
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
-export PATH=${PATH}:$HOME/.local/bin
-export PYTHONPATH=${PYTHONPATH}:${HOME}/.local/bin
+export PATH=$HOME/.local/bin:${PATH}
 
 
 shopt -s histappend
@@ -52,10 +50,26 @@ if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]]; then
         exit
 fi
 
-## Tmux: Only run on my jump box
-#this_host="d360-node"
-#this_node=$(hostname)
-#if [[ $this_node == $this_host ]]; then
-#        tmux -2 new-session -A -s main
-#fi
+function use_conda {
+
+  # added by Anaconda3 2018.12 installer
+  # >>> conda init >>>
+  # !! Contents within this block are managed by 'conda init' !!
+  __conda_setup="$(CONDA_REPORT_ERRORS=false '/home/darenjacobs/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
+  if [ $? -eq 0 ]; then
+      \eval "$__conda_setup"
+  else
+      if [ -f "/home/darenjacobs/anaconda3/etc/profile.d/conda.sh" ]; then
+          . "/home/darenjacobs/anaconda3/etc/profile.d/conda.sh"
+          CONDA_CHANGEPS1=false conda activate base
+      else
+          \export PATH="/home/darenjacobs/anaconda3/bin:$PATH"
+      fi
+  fi
+  unset __conda_setup
+  # <<< conda init <<<
+}
+export PATH="/home/darenjacobs/anaconda3/bin:$PATH"
+
+use_conda
 tmux -2 new-session -A -s main
