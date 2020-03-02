@@ -10,11 +10,12 @@ fi
 
 # User specific aliases and functions
 alias editor=vim
-alias cle="clear"
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias ls="ls -GF"
 alias ll="ls -al"
+alias lll="ls -al |less"
+alias cle="clear"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias djbox="ssh darenjacobs@34.73.18.253"
@@ -30,19 +31,28 @@ export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput s
 export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
 export EDITOR=/usr/local/bin/vim
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home
+
+# >>> GCP init >>>
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/darenjacobs/Applications/google-cloud-sdk/path.bash.inc' ]; then . '/Users/darenjacobs/Applications/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/darenjacobs/Applications/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/darenjacobs/Applications/google-cloud-sdk/completion.bash.inc'; fi
+# <<< GCP init <<<
+
 # added by Anaconda3 5.3.1 installer
 # >>> conda init >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$(CONDA_REPORT_ERRORS=false '/Users/djacobs/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
+__conda_setup="$(CONDA_REPORT_ERRORS=false '/Users/darenjacobs/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
 if [ $? -eq 0 ]; then
     \eval "$__conda_setup"
 else
-    if [ -f "/Users/djacobs/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/djacobs/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "/Users/darenjacobs/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/darenjacobs/anaconda3/etc/profile.d/conda.sh"
         CONDA_CHANGEPS1=false conda activate base
     else
-        \export PATH="/Users/djacobs/anaconda3/bin:$PATH"
+        \export PATH="/Users/darenjacobs/anaconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
+# <<< conda init <<<
