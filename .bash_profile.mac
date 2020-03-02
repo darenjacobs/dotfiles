@@ -15,9 +15,7 @@ alias ls="ls -GF"
 alias ll="ls -al"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
-alias jmp='ssh darenjacobs@34.73.125.215'
-alias dnode='ssh darenjacobs@35.243.168.141'
-alias demo-node='ssh darenjacobs@35.237.218.27'
+alias djbox='ssh darenjacobs@34.73.18.253'
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
