@@ -4,6 +4,8 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # Aliases
+alias editor=vim
+alias cle="clear"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias l.='ls -d .* --color=auto'
