@@ -10,6 +10,15 @@ if [ "${flavor}" == "Debian" ]; then
   rm ripgrep_0.10.0_amd64.deb
 fi
 
+if [ -f /etc/redhat-release ]; then
+       sudo yum install -y tmux	
+       sudo yum install epel-release
+       sudo yum config-manager --set-enabled PowerTool
+       sudo yum config-manager --add-repo=https://copr.fedorainfracloud.org/coprs/carlwgeorge/ripgrep/repo/epel-7/carlwgeorge-ripgrep-epel-7.repo
+       sudo yum install ripgrep
+fi
+
+
 if [ ! -d $HOME/.dotfiles ] && [ ! -h $HOME/.bash_profile ]; then
   mkdir $HOME/.bak && mv $HOME/.bash* $HOME/.bak && mv $HOME/.vim* $HOME/.bak
   mv $HOME/dotfiles $HOME/.dotfiles
