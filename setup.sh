@@ -12,6 +12,7 @@ fi
 
 if [ -f /etc/redhat-release ]; then
        sudo yum install tmux -y
+       sudo yum install vim -y
        sudo yum install epel-release -y
        sudo yum config-manager --set-enabled PowerTool -y
        sudo yum config-manager --add-repo=https://copr.fedorainfracloud.org/coprs/carlwgeorge/ripgrep/repo/epel-7/carlwgeorge-ripgrep-epel-7.repo
