@@ -19,7 +19,7 @@ set noshowmode " Don't show the current mode (airline.vim takes care of us)
 set title " Show the filename in the window titlebar
 set visualbell " Use visual bell instead of audible bell
 set wildchar=<TAB> " Character for CLI expansion (TAB-completion)
-set ic " ignore case in searches
+set smartcase " find based on case
 set undofile " Maintain undo history between sessions
 set undodir=~/.vim/undodir
 set pastetoggle=<F6> " Turn off autoident whe pasting code.  :set paste :set nopaste
