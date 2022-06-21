@@ -4,6 +4,7 @@ syntax on
 set mouse=a
 filetype plugin indent on
 set runtimepath^=~/.vim/bundle/ctrlp.vim
+set splitright
 set tabstop=2 " number of visual spaces per TAB
 set softtabstop=2 " number of spaces in tab when editing
 set expandtab " tabs are spaces
