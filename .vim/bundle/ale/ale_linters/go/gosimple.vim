@@ -4,7 +4,9 @@
 call ale#linter#Define('go', {
 \   'name': 'gosimple',
 \   'executable': 'gosimple',
-\   'command': 'gosimple %t',
-\   'callback': 'ale#handlers#unix#HandleAsWarning',
-\   'output_stream': 'both'
+\   'cwd': '%s:h',
+\   'command': {b -> ale#go#EnvString(b) . 'gosimple .'},
+\   'callback': 'ale#handlers#go#Handler',
+\   'output_stream': 'both',
+\   'lint_file': 1,
 \})

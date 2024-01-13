@@ -1,5 +1,10 @@
-Execute(The crystal handler should parse lines correctly and add the column if it can):
+Before:
   runtime ale_linters/crystal/crystal.vim
+
+After:
+  call ale#linter#Reset()
+
+Execute(The crystal handler should parse lines correctly and add the column if it can):
   AssertEqual
   \ [
   \   {
@@ -12,5 +17,12 @@ Execute(The crystal handler should parse lines correctly and add the column if i
   \ '[{"file":"/tmp/test.cr","line":2,"column":1,"size":null,"message":"unexpected token: EOF"}]'
   \ ])
 
-After:
-  call ale#linter#Reset()
+Execute(The crystal handler should not fail when a missing file is required):
+  AssertEqual
+  \ [ { 'lnum':1, 'col': 1, 'text': 'while requiring "./nonexistent.cr"' } ],
+  \ ale_linters#crystal#crystal#Handle(255,
+  \ json_encode([
+  \ { "file":"/tmp/file.cr","line":1,"column":1,"size":0,"message":"while requiring \"./nonexistent.cr\"" },
+  \ { "message": "can't find file './nonexistent.cr' relative to '/tmp'" },
+  \ ])
+  \ )

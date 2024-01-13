@@ -72,6 +72,16 @@ colorscheme gruvbox
 set t_Co=256  " vim-monokai now only support 256 colours in terminal.
 let g:airline_theme='gruvbox'
 
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'javascript': ['eslint'],
+\}
+
+let g:ale_completion_enabled = 1
+
+" Set this variable to 1 to fix files when you save them.
+let g:ale_fix_on_save = 1
+
 " Fix Yaml and sh file editing
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType sh setlocal ts=2 sts=2 sw=2 expandtab

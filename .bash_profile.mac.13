@@ -12,13 +12,14 @@ fi
 alias editor=vim
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
+alias k="kubectl"
 alias ls="ls -GF"
 alias ll="ls -al"
 alias lll="ls -al |less"
 alias cle="clear"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
-alias djbox="ssh darenjacobs@34.73.18.253"
+alias djbox="ssh darenjacobs@35.229.16.254"
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -27,12 +28,15 @@ function parse_git_branch {
 export HISTTIMEFORMAT="%F %T "
 export HISTFILESIZE=1000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
-export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n> \[$(tput sgr0)\]"
+export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n➤ \[$(tput sgr0)\]"
 export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin:/usr/bin/git
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
 export EDITOR=/usr/local/bin/vim
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-# Cellwize Stuff
-alias rke1='export KUBECONFIG=~/Documents/rke1.yaml'
-alias rke2='export KUBECONFIG=~/Documents/rke2.yaml'
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc'; fi
+neofetch

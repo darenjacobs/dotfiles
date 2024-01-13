@@ -1,15 +1,33 @@
-" Author: Steve Dignam <steve@dignam.xyz>
-" Description: Support for mdl, a markdown linter
+" Author: Steve Dignam <steve@dignam.xyz>, Josh Leeb-du Toit <joshleeb.com>
+" Description: Support for mdl, a markdown linter.
+
+call ale#Set('markdown_mdl_executable', 'mdl')
+call ale#Set('markdown_mdl_options', '')
+
+function! ale_linters#markdown#mdl#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'markdown_mdl_executable')
+endfunction
+
+function! ale_linters#markdown#mdl#GetCommand(buffer) abort
+    let l:executable = ale_linters#markdown#mdl#GetExecutable(a:buffer)
+    let l:exec_args = l:executable =~? 'bundle$'
+    \   ? ' exec mdl'
+    \   : ''
+
+    let l:options = ale#Var(a:buffer, 'markdown_mdl_options')
+
+    return ale#Escape(l:executable) . l:exec_args
+    \   . ' -j' . (!empty(l:options) ? ' ' . l:options : '')
+endfunction
 
 function! ale_linters#markdown#mdl#Handle(buffer, lines) abort
-    " matches: '(stdin):173: MD004 Unordered list style'
-    let l:pattern = ':\(\d*\): \(.*\)$'
     let l:output = []
 
-    for l:match in ale#util#GetMatches(a:lines, l:pattern)
+    for l:error in ale#util#FuzzyJSONDecode(a:lines, [])
         call add(l:output, {
-        \   'lnum': l:match[1] + 0,
-        \   'text': l:match[2],
+        \   'lnum': l:error['line'],
+        \   'code': l:error['rule']  . '/' . join(l:error['aliases'], '/'),
+        \   'text': l:error['description'],
         \   'type': 'W',
         \})
     endfor
@@ -19,7 +37,7 @@ endfunction
 
 call ale#linter#Define('markdown', {
 \   'name': 'mdl',
-\   'executable': 'mdl',
-\   'command': 'mdl',
+\   'executable': function('ale_linters#markdown#mdl#GetExecutable'),
+\   'command': function('ale_linters#markdown#mdl#GetCommand'),
 \   'callback': 'ale_linters#markdown#mdl#Handle'
 \})

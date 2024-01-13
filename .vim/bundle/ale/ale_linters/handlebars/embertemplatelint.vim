@@ -2,17 +2,35 @@
 " Description: Ember-template-lint for checking Handlebars files
 
 call ale#Set('handlebars_embertemplatelint_executable', 'ember-template-lint')
-call ale#Set('handlebars_embertemplatelint_use_global', 0)
+call ale#Set('handlebars_embertemplatelint_use_global', get(g:, 'ale_use_global_executables', 0))
 
 function! ale_linters#handlebars#embertemplatelint#GetExecutable(buffer) abort
-    return ale#node#FindExecutable(a:buffer, 'handlebars_embertemplatelint', [
+    return ale#path#FindExecutable(a:buffer, 'handlebars_embertemplatelint', [
     \   'node_modules/.bin/ember-template-lint',
     \])
 endfunction
 
-function! ale_linters#handlebars#embertemplatelint#GetCommand(buffer) abort
-    return ale_linters#handlebars#embertemplatelint#GetExecutable(a:buffer)
-    \   . ' --json %t'
+function! ale_linters#handlebars#embertemplatelint#GetCommand(buffer, version) abort
+    if ale#semver#GTE(a:version, [4, 0, 0])
+        " --json was removed in favor of --format=json in ember-template-lint@4.0.0
+        return '%e --format=json --filename %s'
+    endif
+
+    if ale#semver#GTE(a:version, [1, 6, 0])
+        " Reading from stdin was introduced in ember-template-lint@1.6.0
+        return '%e --json --filename %s'
+    endif
+
+    return '%e --json %t'
+endfunction
+
+function! ale_linters#handlebars#embertemplatelint#GetCommandWithVersionCheck(buffer) abort
+    return ale#semver#RunWithVersionCheck(
+    \   a:buffer,
+    \   ale_linters#handlebars#embertemplatelint#GetExecutable(a:buffer),
+    \   '%e --version',
+    \   function('ale_linters#handlebars#embertemplatelint#GetCommand'),
+    \)
 endfunction
 
 function! ale_linters#handlebars#embertemplatelint#Handle(buffer, lines) abort
@@ -22,15 +40,13 @@ function! ale_linters#handlebars#embertemplatelint#Handle(buffer, lines) abort
     for l:error in get(values(l:json), 0, [])
         if has_key(l:error, 'fatal')
             call add(l:output, {
-            \   'bufnr': a:buffer,
-            \   'lnum': 1,
-            \   'col': 1,
+            \   'lnum': get(l:error, 'line', 1),
+            \   'col': get(l:error, 'column', 1),
             \   'text': l:error.message,
             \   'type': l:error.severity == 1 ? 'W' : 'E',
             \})
         else
             call add(l:output, {
-            \   'bufnr': a:buffer,
             \   'lnum': l:error.line,
             \   'col': l:error.column,
             \   'text': l:error.rule . ': ' . l:error.message,
@@ -43,8 +59,9 @@ function! ale_linters#handlebars#embertemplatelint#Handle(buffer, lines) abort
 endfunction
 
 call ale#linter#Define('handlebars', {
-\   'name': 'ember-template-lint',
-\   'executable_callback': 'ale_linters#handlebars#embertemplatelint#GetExecutable',
-\   'command_callback': 'ale_linters#handlebars#embertemplatelint#GetCommand',
+\   'name': 'embertemplatelint',
+\   'aliases': ['ember-template-lint'],
+\   'executable': function('ale_linters#handlebars#embertemplatelint#GetExecutable'),
+\   'command': function('ale_linters#handlebars#embertemplatelint#GetCommandWithVersionCheck'),
 \   'callback': 'ale_linters#handlebars#embertemplatelint#Handle',
 \})

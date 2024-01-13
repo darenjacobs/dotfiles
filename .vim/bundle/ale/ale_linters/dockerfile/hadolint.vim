@@ -2,32 +2,73 @@
 
 " always, yes, never
 call ale#Set('dockerfile_hadolint_use_docker', 'never')
-call ale#Set('dockerfile_hadolint_docker_image', 'lukasmartinelli/hadolint')
+call ale#Set('dockerfile_hadolint_docker_image', 'hadolint/hadolint')
+call ale#Set('dockerfile_hadolint_options', '')
 
 function! ale_linters#dockerfile#hadolint#Handle(buffer, lines) abort
     " Matches patterns line the following:
     "
-    " stdin:19: F: Pipe chain should start with a raw value.
-    let l:pattern = '\v^/dev/stdin:?(\d+)? (\S+) (.+)$'
+    " -:19 DL3001 warning: Pipe chain should start with a raw value.
+    " /dev/stdin:19:3 unexpected thing
+    let l:pattern = '\v^%(/dev/stdin|-):(\d+):?(\d+)? ((DL|SC)(\d+) )?((.+)?: )?(.+)$'
     let l:output = []
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)
         let l:lnum = 0
+        let l:colnum = 0
 
         if l:match[1] isnot# ''
             let l:lnum = l:match[1] + 0
         endif
 
-        let l:type = 'W'
-        let l:text = l:match[3]
+        if l:match[2] isnot# ''
+            let l:colnum = l:match[2] + 0
+        endif
 
-        call add(l:output, {
+        " Shellcheck knows a 'style' severity - pin it to info level as well.
+        if l:match[7] is# 'style'
+            let l:type = 'I'
+        elseif l:match[7] is# 'info'
+            let l:type = 'I'
+        elseif l:match[7] is# 'warning'
+            let l:type = 'W'
+        else
+            let l:type = 'E'
+        endif
+
+        let l:text = l:match[8]
+        let l:detail = l:match[8]
+        let l:domain = 'https://github.com/hadolint/hadolint/wiki/'
+        let l:code = ''
+        let l:link = ''
+
+        if l:match[4] is# 'SC'
+            let l:domain = 'https://github.com/koalaman/shellcheck/wiki/'
+        endif
+
+        if l:match[5] isnot# ''
+            let l:code = l:match[4] . l:match[5]
+            let l:link = ' ( ' . l:domain . l:code . ' )'
+            let l:text = l:code . ': ' . l:detail
+            let l:detail = l:code . l:link . "\n\n" . l:detail
+        else
+            let l:type = 'E'
+            let l:detail = 'hadolint could not parse the file because of a syntax error.'
+        endif
+
+        let l:line_output = {
         \   'lnum': l:lnum,
-        \   'col': 0,
+        \   'col': l:colnum,
         \   'type': l:type,
         \   'text': l:text,
-        \   'nr': l:match[2],
-        \})
+        \   'detail': l:detail
+        \}
+
+        if l:code isnot# ''
+            let l:line_output['code'] = l:code
+        endif
+
+        call add(l:output, l:line_output)
     endfor
 
     return l:output
@@ -62,16 +103,21 @@ endfunction
 
 function! ale_linters#dockerfile#hadolint#GetCommand(buffer) abort
     let l:command = ale_linters#dockerfile#hadolint#GetExecutable(a:buffer)
+    let l:opts = ale#Var(a:buffer, 'dockerfile_hadolint_options') . ' --no-color -'
+
     if l:command is# 'docker'
-        return 'docker run --rm -i ' . ale#Var(a:buffer, 'dockerfile_hadolint_docker_image')
+        return printf('docker run --rm -i %s hadolint %s',
+        \ ale#Var(a:buffer, 'dockerfile_hadolint_docker_image'),
+        \ l:opts)
     endif
-    return 'hadolint -'
+
+    return 'hadolint ' . l:opts
 endfunction
 
 
 call ale#linter#Define('dockerfile', {
 \   'name': 'hadolint',
-\   'executable_callback': 'ale_linters#dockerfile#hadolint#GetExecutable',
-\   'command_callback': 'ale_linters#dockerfile#hadolint#GetCommand',
+\   'executable': function('ale_linters#dockerfile#hadolint#GetExecutable'),
+\   'command': function('ale_linters#dockerfile#hadolint#GetCommand'),
 \   'callback': 'ale_linters#dockerfile#hadolint#Handle',
 \})

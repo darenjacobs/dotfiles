@@ -11,6 +11,38 @@ function! ale#util#FeedKeys(...) abort
     return call('feedkeys', a:000)
 endfunction
 
+" Show a message in as small a window as possible.
+"
+" Vim 8 does not support echoing long messages from asynchronous callbacks,
+" but NeoVim does. Small messages can be echoed in Vim 8, and larger messages
+" have to be shown in preview windows.
+function! ale#util#ShowMessage(string, ...) abort
+    let l:options = get(a:000, 0, {})
+
+    if !has('nvim')
+        call ale#preview#CloseIfTypeMatches('ale-preview.message')
+    endif
+
+    " We have to assume the user is using a monospace font.
+    if has('nvim') || (a:string !~? "\n" && len(a:string) < &columns)
+        " no-custom-checks
+        echo a:string
+    else
+        call ale#preview#Show(split(a:string, "\n"), extend(
+        \   {
+        \       'filetype': 'ale-preview.message',
+        \       'stay_here': 1,
+        \   },
+        \   l:options,
+        \))
+    endif
+endfunction
+
+" A wrapper function for execute, so we can test executing some commands.
+function! ale#util#Execute(expr) abort
+    execute a:expr
+endfunction
+
 if !exists('g:ale#util#nul_file')
     " A null file for sending output to nothing.
     let g:ale#util#nul_file = '/dev/null'
@@ -20,17 +52,98 @@ if !exists('g:ale#util#nul_file')
     endif
 endif
 
+" Given a job, a buffered line of data, a list of parts of lines, a mode data
+" is being read in, and a callback, join the lines of output for a NeoVim job
+" or socket together, and call the callback with the joined output.
+"
+" Note that jobs and IDs are the same thing on NeoVim.
+function! ale#util#JoinNeovimOutput(job, last_line, data, mode, callback) abort
+    if a:mode is# 'raw'
+        call a:callback(a:job, join(a:data, "\n"))
+
+        return ''
+    endif
+
+    let l:lines = a:data[:-2]
+
+    if len(a:data) > 1
+        let l:lines[0] = a:last_line . l:lines[0]
+        let l:new_last_line = a:data[-1]
+    else
+        let l:new_last_line = a:last_line . get(a:data, 0, '')
+    endif
+
+    for l:line in l:lines
+        call a:callback(a:job, l:line)
+    endfor
+
+    return l:new_last_line
+endfunction
+
 " Return the number of lines for a given buffer.
 function! ale#util#GetLineCount(buffer) abort
     return len(getbufline(a:buffer, 1, '$'))
 endfunction
 
 function! ale#util#GetFunction(string_or_ref) abort
-    if type(a:string_or_ref) == type('')
+    if type(a:string_or_ref) is v:t_string
         return function(a:string_or_ref)
     endif
 
     return a:string_or_ref
+endfunction
+
+" Open the file (at the given line).
+" options['open_in'] can be:
+"   current-buffer (default)
+"   tab
+"   split
+"   vsplit
+function! ale#util#Open(filename, line, column, options) abort
+    let l:open_in = get(a:options, 'open_in', 'current-buffer')
+    let l:args_to_open = '+' . a:line . ' ' . fnameescape(a:filename)
+
+    if l:open_in is# 'tab'
+        call ale#util#Execute('tabedit ' . l:args_to_open)
+    elseif l:open_in is# 'split'
+        call ale#util#Execute('split ' . l:args_to_open)
+    elseif l:open_in is# 'vsplit'
+        call ale#util#Execute('vsplit ' . l:args_to_open)
+    elseif bufnr(a:filename) isnot bufnr('')
+        " Open another file only if we need to.
+        call ale#util#Execute('edit ' . l:args_to_open)
+    else
+        normal! m`
+    endif
+
+    call cursor(a:line, a:column)
+    normal! zz
+endfunction
+
+let g:ale#util#error_priority = 5
+let g:ale#util#warning_priority = 4
+let g:ale#util#info_priority = 3
+let g:ale#util#style_error_priority = 2
+let g:ale#util#style_warning_priority = 1
+
+function! ale#util#GetItemPriority(item) abort
+    if a:item.type is# 'I'
+        return g:ale#util#info_priority
+    endif
+
+    if a:item.type is# 'W'
+        if get(a:item, 'sub_type', '') is# 'style'
+            return g:ale#util#style_warning_priority
+        endif
+
+        return g:ale#util#warning_priority
+    endif
+
+    if get(a:item, 'sub_type', '') is# 'style'
+        return g:ale#util#style_error_priority
+    endif
+
+    return g:ale#util#error_priority
 endfunction
 
 " Compare two loclist items for ALE, sorted by their buffers, filenames, and
@@ -67,6 +180,23 @@ function! ale#util#LocItemCompare(left, right) abort
     endif
 
     if a:left.col > a:right.col
+        return 1
+    endif
+
+    " When either of the items lacks a problem type, then the two items should
+    " be considered equal. This is important for loclist jumping.
+    if !has_key(a:left, 'type') || !has_key(a:right, 'type')
+        return 0
+    endif
+
+    let l:left_priority = ale#util#GetItemPriority(a:left)
+    let l:right_priority = ale#util#GetItemPriority(a:right)
+
+    if l:left_priority < l:right_priority
+        return -1
+    endif
+
+    if l:left_priority > l:right_priority
         return 1
     endif
 
@@ -139,6 +269,17 @@ function! ale#util#BinarySearch(loclist, buffer, line, column) abort
                 let l:index += 1
             endwhile
 
+            " Scan forwards to find the last item on the column for the item
+            " we found, which will have the most serious problem.
+            let l:item_column = a:loclist[l:index].col
+
+            while l:index < l:max
+            \&& a:loclist[l:index + 1].bufnr == a:buffer
+            \&& a:loclist[l:index + 1].lnum == a:line
+            \&& a:loclist[l:index + 1].col == l:item_column
+                let l:index += 1
+            endwhile
+
             return l:index
         endif
     endwhile
@@ -148,9 +289,8 @@ endfunction
 " See :help sandbox
 function! ale#util#InSandbox() abort
     try
-        function! s:SandboxCheck() abort
-        endfunction
-    catch /^Vim\%((\a\+)\)\=:E48/
+        let &l:equalprg=&l:equalprg
+    catch /E48/
         " E48 is the sandbox error.
         return 1
     endtry
@@ -158,14 +298,23 @@ function! ale#util#InSandbox() abort
     return 0
 endfunction
 
-" Get the number of milliseconds since some vague, but consistent, point in
-" the past.
-"
-" This function can be used for timing execution, etc.
-"
-" The time will be returned as a Number.
-function! ale#util#ClockMilliseconds() abort
-    return float2nr(reltimefloat(reltime()) * 1000)
+function! ale#util#Tempname() abort
+    let l:clear_tempdir = 0
+
+    if exists('$TMPDIR') && empty($TMPDIR)
+        let l:clear_tempdir = 1
+        let $TMPDIR = '/tmp'
+    endif
+
+    try
+        let l:name = tempname() " no-custom-checks
+    finally
+        if l:clear_tempdir
+            let $TMPDIR = ''
+        endif
+    endtry
+
+    return l:name
 endfunction
 
 " Given a single line, or a List of lines, and a single pattern, or a List
@@ -175,8 +324,8 @@ endfunction
 " Only the first pattern which matches a line will be returned.
 function! ale#util#GetMatches(lines, patterns) abort
     let l:matches = []
-    let l:lines = type(a:lines) == type([]) ? a:lines : [a:lines]
-    let l:patterns = type(a:patterns) == type([]) ? a:patterns : [a:patterns]
+    let l:lines = type(a:lines) is v:t_list ? a:lines : [a:lines]
+    let l:patterns = type(a:patterns) is v:t_list ? a:patterns : [a:patterns]
 
     for l:line in l:lines
         for l:pattern in l:patterns
@@ -192,16 +341,22 @@ function! ale#util#GetMatches(lines, patterns) abort
     return l:matches
 endfunction
 
+" Given a single line, or a List of lines, and a single pattern, or a List of
+" patterns, and a callback function for mapping the items matches, return the
+" result of mapping all of the matches for the lines from the given patterns,
+" using matchlist()
+"
+" Only the first pattern which matches a line will be returned.
+function! ale#util#MapMatches(lines, patterns, Callback) abort
+    return map(ale#util#GetMatches(a:lines, a:patterns), 'a:Callback(v:val)')
+endfunction
+
 function! s:LoadArgCount(function) abort
-    let l:Function = a:function
-
-    redir => l:output
-        silent! function Function
-    redir END
-
-    if !exists('l:output')
+    try
+        let l:output = execute('function a:function')
+    catch /E123/
         return 0
-    endif
+    endtry
 
     let l:match = matchstr(split(l:output, "\n")[0], '\v\([^)]+\)')[1:-2]
     let l:arg_list = filter(split(l:match, ', '), 'v:val isnot# ''...''')
@@ -236,6 +391,13 @@ function! ale#util#EscapePCRE(unsafe_string) abort
     return substitute(a:unsafe_string, '\([\-\[\]{}()*+?.^$|]\)', '\\\1', 'g')
 endfunction
 
+" Escape a string so that it can be used as a literal string inside an evaled
+" vim command.
+function! ale#util#EscapeVim(unsafe_string) abort
+    return "'" . substitute(a:unsafe_string, "'", "''", 'g') . "'"
+endfunction
+
+
 " Given a String or a List of String values, try and decode the string(s)
 " as a JSON value which can be decoded with json_decode. If the JSON string
 " is invalid, the default argument value will be returned instead.
@@ -247,11 +409,18 @@ function! ale#util#FuzzyJSONDecode(data, default) abort
         return a:default
     endif
 
-    let l:str = type(a:data) == type('') ? a:data : join(a:data, '')
+    let l:str = type(a:data) is v:t_string ? a:data : join(a:data, '')
 
     try
-        return json_decode(l:str)
-    catch /E474/
+        let l:result = json_decode(l:str)
+
+        " Vim 8 only uses the value v:none for decoding blank strings.
+        if !has('nvim') && l:result is v:none
+            return a:default
+        endif
+
+        return l:result
+    catch /E474\|E491/
         return a:default
     endtry
 endfunction
@@ -262,10 +431,13 @@ endfunction
 " the buffer.
 function! ale#util#Writefile(buffer, lines, filename) abort
     let l:corrected_lines = getbufvar(a:buffer, '&fileformat') is# 'dos'
-    \   ? map(copy(a:lines), 'v:val . "\r"')
+    \   ? map(copy(a:lines), 'substitute(v:val, ''\r*$'', ''\r'', '''')')
     \   : a:lines
 
-    call writefile(l:corrected_lines, a:filename) " no-custom-checks
+    " Set binary flag if buffer doesn't have eol and nofixeol to avoid appending newline
+    let l:flags = !getbufvar(a:buffer, '&eol') && exists('+fixeol') && !&fixeol ? 'bS' : 'S'
+
+    call writefile(l:corrected_lines, a:filename, l:flags) " no-custom-checks
 endfunction
 
 if !exists('s:patial_timers')
@@ -273,8 +445,10 @@ if !exists('s:patial_timers')
 endif
 
 function! s:ApplyPartialTimer(timer_id) abort
-    let [l:Callback, l:args] = remove(s:partial_timers, a:timer_id)
-    call call(l:Callback, [a:timer_id] + l:args)
+    if has_key(s:partial_timers, a:timer_id)
+        let [l:Callback, l:args] = remove(s:partial_timers, a:timer_id)
+        call call(l:Callback, [a:timer_id] + l:args)
+    endif
 endfunction
 
 " Given a delay, a callback, a List of arguments, start a timer with
@@ -296,4 +470,105 @@ function! ale#util#StopPartialTimer(timer_id) abort
     if has_key(s:partial_timers, a:timer_id)
         call remove(s:partial_timers, a:timer_id)
     endif
+endfunction
+
+" Given a possibly multi-byte string and a 1-based character position on a
+" line, return the 1-based byte position on that line.
+function! ale#util#Col(str, chr) abort
+    if a:chr < 2
+        return a:chr
+    endif
+
+    return strlen(join(split(a:str, '\zs')[0:a:chr - 2], '')) + 1
+endfunction
+
+function! ale#util#FindItemAtCursor(buffer) abort
+    let l:info = get(g:ale_buffer_info, a:buffer, {})
+    let l:loclist = get(l:info, 'loclist', [])
+    let l:pos = getpos('.')
+    let l:index = ale#util#BinarySearch(l:loclist, a:buffer, l:pos[1], l:pos[2])
+    let l:loc = l:index >= 0 ? l:loclist[l:index] : {}
+
+    return [l:info, l:loc]
+endfunction
+
+function! ale#util#Input(message, value, ...) abort
+    if a:0 > 0
+        return input(a:message, a:value, a:1)
+    else
+        return input(a:message, a:value)
+    endif
+endfunction
+
+function! ale#util#HasBuflineApi() abort
+    return exists('*deletebufline') && exists('*setbufline')
+endfunction
+
+" Sets buffer contents to lines
+function! ale#util#SetBufferContents(buffer, lines) abort
+    let l:has_bufline_api = ale#util#HasBuflineApi()
+
+    if !l:has_bufline_api && a:buffer isnot bufnr('')
+        return
+    endif
+
+    " If the file is in DOS mode, we have to remove carriage returns from
+    " the ends of lines before calling setline(), or we will see them
+    " twice.
+    let l:new_lines = getbufvar(a:buffer, '&fileformat') is# 'dos'
+    \   ? map(copy(a:lines), 'substitute(v:val, ''\r\+$'', '''', '''')')
+    \   : a:lines
+    let l:first_line_to_remove = len(l:new_lines) + 1
+
+    " Use a Vim API for setting lines in other buffers, if available.
+    if l:has_bufline_api
+        call setbufline(a:buffer, 1, l:new_lines)
+        call deletebufline(a:buffer, l:first_line_to_remove, '$')
+    " Fall back on setting lines the old way, for the current buffer.
+    else
+        let l:old_line_length = line('$')
+
+        if l:old_line_length >= l:first_line_to_remove
+            let l:save = winsaveview()
+            silent execute
+            \   l:first_line_to_remove . ',' . l:old_line_length . 'd_'
+            call winrestview(l:save)
+        endif
+
+        call setline(1, l:new_lines)
+    endif
+
+    return l:new_lines
+endfunction
+
+function! ale#util#GetBufferContents(buffer) abort
+    return join(getbufline(a:buffer, 1, '$'), '\n') . '\n'
+endfunction
+
+function! ale#util#ToURI(resource) abort
+    let l:uri_handler = ale#uri#GetURIHandler(a:resource)
+
+    if l:uri_handler is# v:null
+        " resource is a filesystem path
+        let l:uri = ale#path#ToFileURI(a:resource)
+    else
+        " resource is a URI
+        let l:uri = a:resource
+    endif
+
+    return l:uri
+endfunction
+
+function! ale#util#ToResource(uri) abort
+    let l:uri_handler = ale#uri#GetURIHandler(a:uri)
+
+    if l:uri_handler is# v:null
+        " resource is a filesystem path
+        let l:resource = ale#path#FromFileURI(a:uri)
+    else
+        " resource is a URI
+        let l:resource = a:uri
+    endif
+
+    return l:resource
 endfunction
