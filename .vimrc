@@ -101,7 +101,7 @@ function! FindStringFunction()
     execute 'vim ' . searchString . ' **/* | copen'
 endfunction
 
-nnoremap \f :FindString<CR>
+nnoremap <leader>f :FindString<CR>
 
 
 " Quit NERDTree & Startify
