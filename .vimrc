@@ -94,6 +94,16 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
+" Daren
+command! FindString call FindStringFunction()
+function! FindStringFunction()
+    let searchString = input('Enter search string: ')
+    execute 'vim ' . searchString . ' **/* | copen'
+endfunction
+
+nnoremap \f :FindString<CR>
+
+
 " Quit NERDTree & Startify
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 

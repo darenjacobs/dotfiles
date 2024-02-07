@@ -4,22 +4,23 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # Get bash-completion
+eval "$(/opt/homebrew/bin/brew shellenv)"
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
 
 # User specific aliases and functions
 alias editor=vim
-alias kl="kubectl"
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
+alias k="kubectl"
 alias ls="ls -GF"
 alias ll="ls -al"
 alias lll="ls -al |less"
 alias cle="clear"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
-alias djbox="ssh darenjacobs@34.73.18.253"
+alias djbox="ssh darenjacobs@35.229.16.254"
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -28,32 +29,15 @@ function parse_git_branch {
 export HISTTIMEFORMAT="%F %T "
 export HISTFILESIZE=1000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
-export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n> \[$(tput sgr0)\]"
-export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin
+export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n➤ \[$(tput sgr0)\]"
+export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin:/usr/bin/git
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
 export EDITOR=/usr/local/bin/vim
+export BASH_SILENCE_DEPRECATION_WARNING=1
+neofetch
 
-# >>> GCP init >>>
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/darenjacobs/Applications/google-cloud-sdk/path.bash.inc' ]; then . '/Users/darenjacobs/Applications/google-cloud-sdk/path.bash.inc'; fi
+if [ -f '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/darenjacobs/Applications/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/darenjacobs/Applications/google-cloud-sdk/completion.bash.inc'; fi
-# <<< GCP init <<<
-
-# added by Anaconda3 5.3.1 installer
-# >>> conda init >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$(CONDA_REPORT_ERRORS=false '/Users/darenjacobs/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    \eval "$__conda_setup"
-else
-    if [ -f "/Users/darenjacobs/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/darenjacobs/anaconda3/etc/profile.d/conda.sh"
-        CONDA_CHANGEPS1=false conda activate base
-    else
-        \export PATH="/Users/darenjacobs/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda init <<<
+if [ -f '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc'; fi
