@@ -37,6 +37,9 @@ documentation for further customization:
     :h startify
     :h startify-faq
 
+If you want to share anything with your fellow plugin users, make sure to visit
+the [wiki](https://github.com/mhinz/vim-startify/wiki).
+
 ## Screenshot
 
 ![Startify in action!](https://github.com/mhinz/vim-startify/blob/master/images/startify-menu.png)
@@ -45,12 +48,6 @@ That's it. A fancy start screen for Vim.
 
 _(Almost all visible features enabled. Colorscheme:
 [vim-janah](https://github.com/mhinz/vim-janah).)_
-
-## Gotchas
-
-The Vim 7.4.898 from macOS 10.12 (`/usr/bin/vim`) comes with a bug, that opens
-files with `readonly` set. Don't use this Vim from 3 years ago. Use homebrew or
-MacPorts to get a current version.
 
 ## Author and Feedback
 
