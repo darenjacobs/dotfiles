@@ -1,3 +1,3 @@
 [submodule "/Users/djacobs/.dotfiles/.vim/bundle/ale"]
 	path = /Users/djacobs/.dotfiles/.vim/bundle/ale
-	url = https://github.com/w0rp/ale
+	url = https://github.com/dense-analysis/ale.git
