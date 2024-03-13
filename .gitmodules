@@ -7,3 +7,9 @@
 [submodule ".vim/bundle/vim-go"]
 	path = .vim/bundle/vim-go
 	url = https://github.com/fatih/vim-go.git
+[submodule ".vim/bundle/delimitmate"]
+	path = .vim/bundle/delimitmate
+	url = https://github.com/Raimondi/delimitMate.git
+[submodule ".vim/plugged"]
+	path = .vim/plugged
+	url = https://github.com/junegunn/vim-plug.git
