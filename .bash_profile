@@ -45,7 +45,7 @@ echo -e "${WHITE}"; cal ;
 echo -ne "${CYAN}Uptime for this server is ";uptime | awk /'up/ {print $3,$4}'
 echo -ne '\033]2;'$USER@$HOSTNAME' '$(uptime)'\007'
 
-if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]]; then
+if [[ $TERM = "screen-256color" ]] && [[ $(ps -p $PPID -o comm=) = "tmux: server" ]]; then
         mkdir $HOME/logs 2> /dev/null
         logname="$(date '+%Y%m%d%H%M%S').tmux.log"
         script -q -f $HOME/logs/${logname}
