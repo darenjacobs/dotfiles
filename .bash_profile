@@ -53,3 +53,4 @@ if [[ $TERM = "screen-256color" ]] && [[ $(ps -p $PPID -o comm=) = "tmux: server
 fi
 
 tmux -2 new-session -A -s main
+alias ls='ls --color=auto'
