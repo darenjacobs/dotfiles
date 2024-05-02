@@ -24,7 +24,16 @@ alias djbox="ssh darenjacobs@35.229.16.254"
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
+  # Check if there are changes pending commit
+  if ! git diff --quiet || ! git diff --cached --quiet; then
+    color=208 # red for pending changes
+  # Check if the branch is behind its upstream
+  elif [[ $(git fetch --dry-run 2>&1) ]]; then
+    color=208 # red if behind the remote
+  else
+    color=6 # cyan if everything is up-to-date
+  fi
+  echo " $(tput setaf $color)(${ref#refs/heads/})$(tput sgr0) "
 }
 export HISTTIMEFORMAT="%F %T "
 export HISTFILESIZE=1000000
