@@ -9,7 +9,6 @@ if [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
 
-
 # User specific aliases and functions
 alias editor=vim
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
@@ -25,16 +24,7 @@ alias djbox="ssh darenjacobs@35.229.16.254"
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  # Check if there are changes pending commit
-  if ! git diff --quiet || ! git diff --cached --quiet; then
-    color=208 # orange for pending changes
-  # Check if the branch is ahead or behind its upstream
-  elif [ "$(git rev-list --count HEAD...@{u})" -ne 0 ]; then
-    color=208 # orange if the local branch is ahead or behind
-  else
-    color=6 # cyan if everything is up-to-date
-  fi
-  echo " $(tput setaf $color)(${ref#refs/heads/})$(tput sgr0) "
+  echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
 }
 export HISTTIMEFORMAT="%F %T "
 export HISTFILESIZE=1000000
