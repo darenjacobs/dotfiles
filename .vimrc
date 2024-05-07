@@ -5,8 +5,9 @@ set mouse=a
 filetype plugin indent on
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 set splitright
-set tabstop=2 " number of visual spaces per TAB
-set softtabstop=2 " number of spaces in tab when editing
+set tabstop=4 " number of visual spaces per TAB
+set softtabstop=4 " number of spaces in tab when editing
+set shiftwidth=4 " Indents will have a width of 4
 set expandtab " tabs are spaces
 set number " show line numbers
 set showcmd " show command in bottom bar
@@ -23,7 +24,7 @@ set wildchar=<TAB> " Character for CLI expansion (TAB-completion)
 set smartcase " find based on case
 set undofile " Maintain undo history between sessions
 set undodir=~/.vim/undodir
-set pastetoggle=<F6> " Turn off autoident whe pasting code.  :set paste :set nopaste
+set pastetoggle=<F6> " Turn off autoident when pasting code.  :set paste :set nopaste
 
 " Trying Plug we'll see
 call plug#begin('~/.vim/plugged')
