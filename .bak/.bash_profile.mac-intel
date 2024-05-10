@@ -3,13 +3,17 @@ if [ -f ~/.bashrc ]; then
         . ~/.bashrc
 fi
 
+# Get bash-completion
+eval "$(/usr/local/bin/brew shellenv)"
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+
 # User specific aliases and functions
 alias editor=vim
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias k="kubectl"
-alias gp="git push"
-alias gc="git commit -am"
 alias ls="ls -GF"
 alias ll="ls -al"
 alias lll="ls -al |less"
