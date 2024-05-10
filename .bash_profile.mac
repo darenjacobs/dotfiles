@@ -8,6 +8,7 @@ alias editor=vim
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias k="kubectl"
+alias ga="git add -A"
 alias gp="git push"
 alias gc="git commit -am"
 alias ls="ls -GF"
