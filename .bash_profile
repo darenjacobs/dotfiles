@@ -38,7 +38,7 @@ echo -ne ${RED}"Hello $USER, you are now logged in on $HOSTNAME ";echo "";
 if [ -f /etc/redhat-release ]; then
   whats_this=$(cat /etc/redhat-release)
 elif [ -f /etc/issue ];then
-  whats_this=$(head -n 1 /etc/issue)
+  whats_this=$(head -n 1 /etc/issue | awk '{gsub(/\\n|\\l/, ""); print}')
 fi
 echo -e ${CYAN}"This baby is powered by: ${whats_this}" ;
 echo -e "${WHITE}"; cal ;
