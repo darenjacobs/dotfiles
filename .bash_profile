@@ -48,9 +48,8 @@ echo -ne '\033]2;'$USER@$HOSTNAME' '$(uptime)'\007'
 if [[ $TERM = "screen-256color" ]] && [[ $(ps -p $PPID -o comm=) = "tmux: server" ]]; then
         mkdir $HOME/logs 2> /dev/null
         logname="$(date '+%Y%m%d%H%M%S').tmux.log"
-        script -q -f $HOME/logs/${logname}
-        exit
+        exec > >(tee -a "$HOME/logs/${logname}") 2>&1
 fi
 
+# Start tmux session
 tmux -2 new-session -A -s main
-alias ls='ls --color=auto'
