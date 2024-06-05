@@ -97,7 +97,7 @@ autocmd BufWinLeave * call clearmatches()
 
 " Daren
 iabbrev istd #include <stdio.h><CR>#include <stdlib.h><CR>#include <string.h><CR>int main() {<CR><CR>}
-let @i = 'i#include <stdio.h>int main() {€ku	 €ý5'
+let @i = 'i€PS#include <stdio.h>int main() {}[201~€ku'
 command! FindString call FindStringFunction()
 function! FindStringFunction()
     let searchString = input('Enter search string: ')
