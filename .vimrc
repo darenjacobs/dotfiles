@@ -96,8 +96,8 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
 " Daren
-iabbrev istd #include <stdio.h><CR>#include <stdlib.h><CR>#include <string.h><CR>
-let @i = 'i#include <>€klstdio.h€krint main() {€ku€ý5'
+iabbrev istd #include <stdio.h><CR>#include <stdlib.h><CR>#include <string.h><CR>int main() {<CR><CR>}
+let @i = 'i#include <stdio.h>int main() {€ku	 €ý5'
 command! FindString call FindStringFunction()
 function! FindStringFunction()
     let searchString = input('Enter search string: ')
