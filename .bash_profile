@@ -1,7 +1,31 @@
 # .bash_profile
+
+# Source .bashrc if it exists
 if [ -f ~/.bashrc ]; then
-	. ~/.bashrc
+    . ~/.bashrc
 fi
+
+# Function to force color output in `ls` and maintain default layout
+ls() {
+    if [ -t 1 ]; then
+        # If stdout is a terminal, use the default ls behavior
+        command ls -F --color=auto "$@"
+    else
+        # If stdout is not a terminal, force the column layout and color
+        command ls -F --color=always -C "$@"
+    fi
+}
+
+# Wrapper function for vim to avoid warnings when output is not a terminal
+vim() {
+    if [ -t 1 ]; then
+        # stdout is a terminal
+        command vim "$@"
+    else
+        # stdout is not a terminal, run vim without logging
+        { command vim "$@"; } <$(tty) >$(tty) 2>&1
+    fi
+}
 
 # Aliases
 alias editor=vim
@@ -15,10 +39,11 @@ alias matrix='LC_ALL=C tr -c "[:digit:]" " " < /dev/urandom | dd cbs=$COLUMNS co
 
 # Display Git branch
 function parse_git_branch {
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
     echo " $(tput setaf 6)(${ref#refs/heads/})$(tput setaf 7)$(tput sgr0) "
 }
 
+# Prompt customization
 export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n> \[$(tput sgr0)\]"
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export HISTIGNORE="&:ls:[bf]g:exit"
@@ -27,29 +52,35 @@ export HISTFILESIZE=1000000
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
 export PATH=$HOME/.local/bin:${PATH}
 
-
+# History options
 shopt -s histappend
 shopt -s cmdhist
 HISTCONTROL=ignoredups
 PROMPT_COMMAND="history -a"
 typeset -r PROMPT_COMMAND
+
+# Welcome message
 clear
-echo -ne ${RED}"Hello $USER, you are now logged in on $HOSTNAME ";echo "";
+echo -ne ${RED}"Hello $USER, you are now logged in on $HOSTNAME "; echo ""
 if [ -f /etc/redhat-release ]; then
-  whats_this=$(cat /etc/redhat-release)
-elif [ -f /etc/issue ];then
-  whats_this=$(head -n 1 /etc/issue | awk '{gsub(/\\n|\\l/, ""); print}')
+    whats_this=$(cat /etc/redhat-release)
+elif [ -f /etc/issue ]; then
+    whats_this=$(head -n 1 /etc/issue | awk '{gsub(/\\n|\\l/, ""); print}')
 fi
-echo -e ${CYAN}"This baby is powered by: ${whats_this}" ;
-echo -e "${WHITE}"; cal ;
-echo -ne "${CYAN}Uptime for this server is ";uptime | awk /'up/ {print $3,$4}'
+echo -e ${CYAN}"This baby is powered by: ${whats_this}"
+echo -e "${WHITE}"; cal
+echo -ne "${CYAN}Uptime for this server is "; uptime | awk /'up/ {print $3,$4}'
 echo -ne '\033]2;'$USER@$HOSTNAME' '$(uptime)'\007'
 
+# Check if running in tmux and log session if so
 if [[ $TERM = "screen-256color" ]] && [[ $(ps -p $PPID -o comm=) = "tmux: server" ]]; then
-        mkdir $HOME/logs 2> /dev/null
-        logname="$(date '+%Y%m%d%H%M%S').tmux.log"
-        exec > >(tee -a "$HOME/logs/${logname}") 2>&1
+    mkdir -p $HOME/logs
+    logname="$(date '+%Y%m%d%H%M%S').tmux.log"
+    exec > >(tee -a "$HOME/logs/${logname}") 2>&1
 fi
 
 # Start tmux session
 tmux -2 new-session -A -s main
+
+# Aliases (redefined here to ensure they are set if the above commands change the environment)
+alias ls='ls --color'
