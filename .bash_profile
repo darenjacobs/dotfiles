@@ -1,5 +1,11 @@
 # .bash_profile
 
+# Check if the shell is interactive
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
 # Source .bashrc if it exists
 if [ -f ~/.bashrc ]; then
     . ~/.bashrc
@@ -13,6 +19,29 @@ ls() {
     else
         # If stdout is not a terminal, force the column layout and color
         command ls -F --color=always -C "$@"
+    fi
+}
+
+less() {
+
+    if [ -t 1 ]; then
+        # stdout is a terminal
+        command less "$@"
+    else
+        # stdout is not a terminal, run less without logging
+        { command less "$@"; } <$(tty) >$(tty) 2>&1
+    fi
+}
+
+
+more() {
+
+    if [ -t 1 ]; then
+        # stdout is a terminal
+        command more "$@"
+    else
+        # stdout is not a terminal, run more without logging
+        { command more "$@"; } <$(tty) >$(tty) 2>&1
     fi
 }
 
@@ -78,6 +107,9 @@ if [[ $TERM = "screen-256color" ]] && [[ $(ps -p $PPID -o comm=) = "tmux: server
     logname="$(date '+%Y%m%d%H%M%S').tmux.log"
     exec > >(tee -a "$HOME/logs/${logname}") 2>&1
 fi
+
+# Ensure terminal type is correct
+export TERM=xterm-256color
 
 # Start tmux session
 tmux -2 new-session -A -s main
