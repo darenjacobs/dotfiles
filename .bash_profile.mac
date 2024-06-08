@@ -22,7 +22,7 @@ alias lll="ls -al |less"
 alias cle="clear"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
-alias djbox="ssh darenjacobs@35.229.16.254"
+alias djbox="ssh darenjacobs@34.23.78.234"
 alias term="/Applications/iTerm.app/Contents/MacOS/iTerm2 > /dev/null 2>&1 &"
 [[ $- != *i* ]] && return
 function parse_git_branch {
