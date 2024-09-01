@@ -24,6 +24,8 @@ alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias djbox="ssh darenjacobs@34.23.78.234"
 alias term="/Applications/iTerm.app/Contents/MacOS/iTerm2 > /dev/null 2>&1 &"
+alias venv="python3 -m venv"
+alias psrc="source venv/bin/activate"
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -49,3 +51,9 @@ export EDITOR=/usr/local/bin/vim
 export BASH_SILENCE_DEPRECATION_WARNING=1
 export COPYFILE_DISABLE=1
 neofetch
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc'; fi
