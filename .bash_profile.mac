@@ -14,9 +14,9 @@ alias ga="git add -A"
 alias gc="git commit -am"
 alias gd="git diff"
 alias gm="git commit -am"
-alias gp="git push"
+alias gp="git pull"
 alias gs="git status"
-alias pull="git pull"
+alias push="git push"
 alias ls="ls -GF"
 alias ll="ls -al"
 alias lll="ls -al |less"
@@ -24,9 +24,11 @@ alias cle="clear"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias djbox="ssh darenjacobs@34.23.78.234"
+alias tf="terraform"
 alias term="/Applications/iTerm.app/Contents/MacOS/iTerm2 > /dev/null 2>&1 &"
 alias venv="python3 -m venv"
 alias psrc="source venv/bin/activate"
+alias wp="watch kubectl get po"
 [[ $- != *i* ]] && return
 function parse_git_branch {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -47,14 +49,24 @@ export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n➤ \[$(tput sgr0)\]"
 export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin:/usr/bin/git
 export PATH="/usr/local/opt/curl/bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PS_FORMAT=user:20,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,bsdtime,args
-export EDITOR=/usr/local/bin/vim
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 export BASH_SILENCE_DEPRECATION_WARNING=1
 export COPYFILE_DISABLE=1
 neofetch
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/path.bash.inc'; fi
+if [ -f '/Users/darenj/Documents/google-cloud-sdk/path.bash.inc' ]; then . '/Users/darenj/Documents/google-cloud-sdk/path.bash.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/djacobs/Documents/google-cloud-sdk/completion.bash.inc'; fi
+if [ -f '/Users/darenj/Documents/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/darenj/Documents/google-cloud-sdk/completion.bash.inc'; fi
+
+[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+
+
+## # Add pyenv to the shell
+## export PATH="$HOME/.pyenv/bin:$PATH"
+## eval "$(pyenv init --path)"
+## eval "$(pyenv init -)"
