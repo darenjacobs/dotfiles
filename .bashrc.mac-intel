@@ -10,3 +10,4 @@ eval "$(/usr/local/bin/brew shellenv)"
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
+PATH="/usr/local/opt/openjdk/bin:$PATH"
