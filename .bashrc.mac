@@ -1,0 +1,32 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc
+fi
+
+# Silicon
+# Get bash-completion
+eval "$(/opt/homebrew/bin/brew shellenv)"
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+
+[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+
+
+# Intel
+# Get bash-completion
+eval "$(/usr/local/bin/brew shellenv)"
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+
+
+if [[ $(uname -m) == 'arm64' ]]; then
+    # On Apple Silicon Mac
+    export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+elif [[ $(uname -m) == 'x86_64' ]]; then
+    # On Intel Mac
+    export PATH="/usr/local/opt/openjdk/bin:$PATH"
+fi
