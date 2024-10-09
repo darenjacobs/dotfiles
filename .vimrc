@@ -73,7 +73,16 @@ colorscheme gruvbox
 set t_Co=256  " vim-monokai now only support 256 colours in terminal.
 let g:airline_theme='gruvbox'
 
+" Enable ALE
+let g:ale_linters = {
+    \ 'yaml': ['yamllint'],
+    \}
+" Enable linting on text change and save
+let g:ale_lint_on_text_changed = 'always'
+let g:ale_lint_on_insert_leave = 1
+
 let g:ale_fixers = {
+\   'yaml': ['prettier'],
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'javascript': ['eslint'],
 \}
