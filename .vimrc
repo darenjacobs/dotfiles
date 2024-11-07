@@ -57,7 +57,7 @@ let g:ctrlp_by_filename = 1
 nnoremap <Leader>a :Ack!<space>
 
 " Git blame
-nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
+nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 
 " disable arrow keys
 nnoremap <Left> :echo "No left for you!"<CR>
