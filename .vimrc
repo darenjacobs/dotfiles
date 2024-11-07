@@ -56,6 +56,9 @@ let g:ctrlp_by_filename = 1
 " Ack leader
 nnoremap <Leader>a :Ack!<space>
 
+" Git blame
+nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
+
 " disable arrow keys
 nnoremap <Left> :echo "No left for you!"<CR>
 nnoremap <Right> :echo "No right for you!"<CR>
