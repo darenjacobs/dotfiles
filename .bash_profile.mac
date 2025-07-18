@@ -27,6 +27,7 @@ alias cle="clear"
 alias grep="grep --color=auto"
 alias add-ssh='eval `ssh-agent -s`; ssh-add'
 alias djbox="ssh darenjacobs@34.23.78.234"
+alias doug-box='ssh -i ~/.ssh/doug-cometx.pem ec2-user@34.222.195.175'
 alias tf="terraform"
 alias term="/Applications/iTerm.app/Contents/MacOS/iTerm2 > /dev/null 2>&1 &"
 alias venv="python3 -m venv"
@@ -36,21 +37,41 @@ alias wp="watch kubectl get po"
 alias onprem-up='cd $HOME/Documents/Github/dply-managed-clients/dev/comet-dev; helm upgrade  "comet-ml" comet-ml/comet-ml --namespace onprem-cert -f override-values.yaml'
 alias onprem-updr='cd $HOME/Users/darenj/Documents/Github/dply-managed-clients/dev/comet-dev; helm upgrade  "comet-ml" comet-ml/comet-ml --namespace onprem-cert -f override-values.yaml --dry-run'
 [[ $- != *i* ]] && return
+# function parse_git_branch {
+#   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+#   # Check if there are changes pending commit
+#   if ! git diff --quiet || ! git diff --cached --quiet; then
+#     color=208 # orange for pending changes
+#   # Check if the branch is ahead or behind its upstream
+#   elif [ "$(git rev-list --count HEAD...@{u})" -ne 0 ]; then
+#     color=208 # orange if the local branch is ahead or behind
+#   else
+#     color=6 # cyan if everything is up-to-date
+#   fi
+#   echo " $(tput setaf $color)(${ref#refs/heads/})$(tput sgr0) "
+# }
 function parse_git_branch {
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  # Check if there are changes pending commit
+  # Get the current ref (quietly stops the function if not a git dir)
+  ref=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || return
+
+  local color=6   # default cyan
+
+  # 1 – Unstaged / staged changes → orange
   if ! git diff --quiet || ! git diff --cached --quiet; then
-    color=208 # orange for pending changes
-  # Check if the branch is ahead or behind its upstream
-  elif [ "$(git rev-list --count HEAD...@{u})" -ne 0 ]; then
-    color=208 # orange if the local branch is ahead or behind
-  else
-    color=6 # cyan if everything is up-to-date
+    color=208
+
+  # 2 – If an upstream exists, see if we’re ahead/behind → orange
+  elif git rev-parse --quiet --verify @{u} >/dev/null 2>&1; then
+    if [ "$(git rev-list --count --left-right @{u}...HEAD)" -ne 0 ]; then
+      color=208
+    fi
   fi
-  echo " $(tput setaf $color)(${ref#refs/heads/})$(tput sgr0) "
+
+  echo " $(tput setaf $color)(${ref})$(tput sgr0) "
 }
 export HISTTIMEFORMAT="%F %T "
-export HISTFILESIZE=1000000
+export HISTSIZE=1000000
+export HISTFILESIZE=100000000
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n➤ \[$(tput sgr0)\]"
 export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin:/usr/bin/git:/opt/homebrew/opt/mysql-client@8.0/bin:
@@ -78,3 +99,6 @@ bind -x '"\C-r": __atuin_history'
 ## export PATH="$HOME/.pyenv/bin:$PATH"
 ## eval "$(pyenv init --path)"
 ## eval "$(pyenv init -)"
+
+# Added by Windsurf
+export PATH="/Users/darenj/.codeium/windsurf/bin:$PATH"

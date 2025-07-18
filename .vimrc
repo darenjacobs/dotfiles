@@ -3,6 +3,7 @@ set nu
 syntax on
 set mouse=a
 filetype plugin indent on
+command! W w !sudo tee >/dev/null %
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 set splitright
 set tabstop=4 " number of visual spaces per TAB
