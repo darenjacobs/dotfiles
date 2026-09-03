@@ -31,6 +31,7 @@ set list lcs=tab:\¿\ ,trail:¿
 " Trying Plug we'll see
 call plug#begin('~/.vim/plugged')
 Plug 'sheerun/vim-polyglot'
+call plug#end()
 
 " Use ripgrep when using Ctrl-P
 if executable('rg')
@@ -60,6 +61,19 @@ nnoremap <Leader>a :Ack!<space>
 " Git blame
 nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 
+" Lazy git
+" nnoremap <leader>g :terminal lazygit<CR>
+
+" Lazy git
+function! OpenLazygit()
+  tabnew
+  call term_start('lazygit', {
+    \ 'curwin': 1,
+    \ 'exit_cb': {job, status -> execute('tabclose')}
+    \ })
+endfunction
+nnoremap <leader>g :call OpenLazygit()<CR>
+
 " disable arrow keys
 nnoremap <Left> :echo "No left for you!"<CR>
 nnoremap <Right> :echo "No right for you!"<CR>
@@ -78,7 +92,7 @@ colorscheme gruvbox
 set t_Co=256  " vim-monokai now only support 256 colours in terminal.
 let g:airline_theme='gruvbox'
 
-" Enable ALE
+" Enable ALEl
 let g:ale_linters = {
     \ 'yaml': ['yamllint'],
     \}

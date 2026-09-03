@@ -25,3 +25,6 @@ elif [[ $(uname -m) == 'x86_64' ]]; then
       . $(brew --prefix)/etc/bash_completion
     fi
 fi
+
+# Added by comet-support-agent troubleshooting
+export PATH="/opt/homebrew/bin:$PATH"

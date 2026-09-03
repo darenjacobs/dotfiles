@@ -10,6 +10,9 @@ alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall F
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias helmsearch='helm search repo'
 alias k="kubectl"
+alias kg="kubectl get"
+alias kgp="kubectl get pods"
+alias kgi="kubectl get ingress"
 alias kx="kubectx"
 alias ga="git add -A"
 alias gc="git commit -am"
@@ -20,6 +23,7 @@ alias gp="git pull"
 alias gs="git status"
 alias push="git push"
 alias macmux="tmux -2 new-session -A -s main"
+alias lg='lazygit'
 alias ls="ls -GF"
 alias ll="ls -al"
 alias lll="ls -al |less"
@@ -33,9 +37,7 @@ alias term="/Applications/iTerm.app/Contents/MacOS/iTerm2 > /dev/null 2>&1 &"
 alias venv="python3 -m venv"
 alias psrc="source venv/bin/activate"
 alias wp="watch kubectl get po"
-# comet aliases
-alias onprem-up='cd $HOME/Documents/Github/dply-managed-clients/dev/comet-dev; helm upgrade  "comet-ml" comet-ml/comet-ml --namespace onprem-cert -f override-values.yaml'
-alias onprem-updr='cd $HOME/Users/darenj/Documents/Github/dply-managed-clients/dev/comet-dev; helm upgrade  "comet-ml" comet-ml/comet-ml --namespace onprem-cert -f override-values.yaml --dry-run'
+alias ccusage="bunx ccusage > ~/token_usage.txt"
 [[ $- != *i* ]] && return
 # function parse_git_branch {
 #   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
@@ -51,27 +53,36 @@ alias onprem-updr='cd $HOME/Users/darenj/Documents/Github/dply-managed-clients/d
 #   echo " $(tput setaf $color)(${ref#refs/heads/})$(tput sgr0) "
 # }
 function parse_git_branch {
-  # Get the current ref (quietly stops the function if not a git dir)
   ref=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || return
 
   local color=6   # default cyan
 
-  # 1 – Unstaged / staged changes → orange
+  # 1 – unstaged / staged changes → orange
   if ! git diff --quiet || ! git diff --cached --quiet; then
     color=208
 
-  # 2 – If an upstream exists, see if we’re ahead/behind → orange
+  # 2 – ahead/behind of upstream → orange
   elif git rev-parse --quiet --verify @{u} >/dev/null 2>&1; then
-    if [ "$(git rev-list --count --left-right @{u}...HEAD)" -ne 0 ]; then
+    local ahead_behind
+    ahead_behind=$(git rev-list --left-right --count @{u}...HEAD | awk '{print $1 + $2}')
+    if [ "$ahead_behind" -ne 0 ]; then
       color=208
     fi
   fi
 
   echo " $(tput setaf $color)(${ref})$(tput sgr0) "
 }
+
+# Bash History Configuration
 export HISTTIMEFORMAT="%F %T "
 export HISTSIZE=1000000
 export HISTFILESIZE=100000000
+
+# Append to history file instead of overwriting (prevents history loss)
+shopt -s histappend
+
+# Write history after each command and reload from file (syncs across terminals)
+PROMPT_COMMAND="history -a; history -n"
 export PROMPT_HOSTNAME=$(hostname | cut -f-2 -d.)
 export PS1="\[$(tput bold)\][\[$(tput setaf 4)\]\d\[$(tput setaf 7)\] \[$(tput setaf 2)\]\t\[$(tput setaf 7)\]][\[$(tput setaf 1)\]\u\[$(tput setaf 7)\]@\[$(tput setaf 3)\]$PROMPT_HOSTNAME\[$(tput setaf 7)\]] \[$(tput setaf 7)\]\w\[$(tput setaf 7)\]\$(parse_git_branch)\n➤ \[$(tput sgr0)\]"
 export PATH=${PATH}:~/bin:/usr/local/bin:/usr/local/sbin:/usr/bin/git:/opt/homebrew/opt/mysql-client@8.0/bin:
@@ -80,6 +91,17 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export BASH_SILENCE_DEPRECATION_WARNING=1
 export COPYFILE_DISABLE=1
+
+# Load comet-support-agent local credentials (MCP tokens, API keys)
+COMET_ENV_LOCAL="/Users/darenj/Documents/Github/comet-support-agent/.env.local"
+if [ -f "$COMET_ENV_LOCAL" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$COMET_ENV_LOCAL"
+  set +a
+fi
+unset COMET_ENV_LOCAL
+
 neofetch
 
 # ATUIN
@@ -88,17 +110,10 @@ eval "$(atuin init bash)"
 
 # bind to ctrl-r, add any other bindings you want here too
 bind -x '"\C-r": __atuin_history'
-##
-## # bind to the up key, which depends on terminal mode
-## bind -x '"\e[A": __atuin_history --shell-up-key-binding'
-## bind -x '"\eOA": __atuin_history --shell-up-key-binding'
 
+# Added by comet-support-agent troubleshooting
+export PATH="/opt/homebrew/bin:$PATH"
 
-
-## # Add pyenv to the shell
-## export PATH="$HOME/.pyenv/bin:$PATH"
-## eval "$(pyenv init --path)"
-## eval "$(pyenv init -)"
-
-# Added by Windsurf
-export PATH="/Users/darenj/.codeium/windsurf/bin:$PATH"
+# Compatibility aliases
+alias awscli='aws'
+alias neofetch='fastfetch'
