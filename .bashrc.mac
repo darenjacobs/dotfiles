@@ -26,5 +26,9 @@ elif [[ $(uname -m) == 'x86_64' ]]; then
     fi
 fi
 
-# Added by comet-support-agent troubleshooting
 export PATH="/opt/homebrew/bin:$PATH"
+
+# Enable pyenv version selection in Bash.
+if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init - bash)"
+fi
